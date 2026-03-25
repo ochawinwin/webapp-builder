@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button, Card, Badge, Input, Dialog } from "@futurecareer/ui";
 import { createJobAction, updateJobStatusAction, deleteJobAction } from "@/app/actions/job.actions";
@@ -54,6 +55,7 @@ export function JobManagementClient({
   companyId,
   isAdmin,
 }: JobManagementClientProps) {
+  const router = useRouter();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [searchQuery, setSearchQuery] = useState("");
@@ -157,6 +159,7 @@ export function JobManagementClient({
         setIsCreateModalOpen(false);
         setPrescreenQuestions([]);
         form.reset();
+        router.refresh();
         toast.success("ประกาศงานสำเร็จ!", {
           description: "ตำแหน่งงานของคุณถูกเผยแพร่สู่หน้าค้นหางานเรียบร้อยแล้ว",
         });
@@ -175,6 +178,7 @@ export function JobManagementClient({
       const result = await deleteJobAction(formData);
       setDeletingId(null);
       if (result.success) {
+        router.refresh();
         toast.success("ลบประกาศงานเรียบร้อยแล้ว");
       } else {
         toast.error(result.error ?? "เกิดข้อผิดพลาด");
@@ -190,6 +194,7 @@ export function JobManagementClient({
     startTransition(async () => {
       const result = await updateJobStatusAction(formData);
       if (result.success) {
+        router.refresh();
         toast.success(`เปลี่ยนสถานะเป็น ${newStatus === "open" ? "เปิดรับ" : "ปิดรับ"} แล้ว`);
       } else {
         toast.error(result.error ?? "เกิดข้อผิดพลาด");
