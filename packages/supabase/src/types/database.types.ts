@@ -143,6 +143,7 @@ export type Database = {
           created_by: string
           id: string
           image_url: string | null
+          title: string
         }
         Insert: {
           company_id: string
@@ -151,6 +152,7 @@ export type Database = {
           created_by: string
           id?: string
           image_url?: string | null
+          title?: string
         }
         Update: {
           company_id?: string
@@ -159,6 +161,7 @@ export type Database = {
           created_by?: string
           id?: string
           image_url?: string | null
+          title?: string
         }
         Relationships: [
           {

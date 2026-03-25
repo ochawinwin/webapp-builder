@@ -15,7 +15,8 @@ export const updateCompanySchema = z.object({
 });
 
 export const createPostSchema = z.object({
-  content: z.string().min(1, "Post content is required").max(2000),
+  title: z.string().min(1, "กรุณากรอกหัวข้อโพสต์").max(200),
+  content: z.string().min(1, "กรุณากรอกเนื้อหาโพสต์").max(2000),
   image_url: z.string().url().optional().or(z.literal("")),
 });
 

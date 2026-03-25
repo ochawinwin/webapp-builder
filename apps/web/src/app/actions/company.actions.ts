@@ -159,7 +159,7 @@ export async function uploadCompanyLogoAction(
 
 export async function createPostAction(
   formData: FormData
-): Promise<ActionResult<{ postId: string }>> {
+): Promise<ActionResult<{ postId: string; imageUrl: string | null }>> {
   try {
     const supabase = await createServerClient();
     const {
@@ -195,6 +195,7 @@ export async function createPostAction(
     }
 
     const raw = {
+      title: formData.get("title"),
       content: formData.get("content"),
       image_url: imageUrl || undefined,
     };
@@ -210,6 +211,7 @@ export async function createPostAction(
     const insertData: TablesInsert<"company_posts"> = {
       company_id: membership.company.id,
       created_by: user.id,
+      title: parsed.data.title,
       content: parsed.data.content,
       image_url: imageUrl,
     };
@@ -230,7 +232,7 @@ export async function createPostAction(
 
     revalidatePath("/hr/feed");
     revalidatePath(`/company/${membership.company.id}`);
-    return { success: true, data: { postId } };
+    return { success: true, data: { postId, imageUrl } };
   } catch {
     return { success: false, error: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง" };
   }

@@ -52,9 +52,9 @@ export function FeedManagementClient({ initialPosts, companyId }: FeedManagement
           company_id: companyId,
           created_by: "",
           created_at: new Date().toISOString(),
+          title: formData.get("title") as string,
           content: formData.get("content") as string,
-          title: (formData.get("content") as string).split("\n")[0]?.slice(0, 60) ?? "",
-          image_url: null,
+          image_url: result.data?.imageUrl ?? null,
         };
         setPosts((prev) => [newPost, ...prev]);
       } else {
@@ -139,10 +139,18 @@ export function FeedManagementClient({ initialPosts, companyId }: FeedManagement
                 <div className="grid md:grid-cols-3 gap-6">
                   <div className="md:col-span-2 space-y-4">
                     <div className="space-y-2">
+                      <label className="text-sm font-bold">หัวข้อโพสต์ *</label>
+                      <Input
+                        name="title"
+                        placeholder="เช่น กิจกรรม Team Building 2025"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
                       <label className="text-sm font-bold">เนื้อหาโพสต์ *</label>
                       <textarea
                         name="content"
-                        className="w-full min-h-[150px] p-4 rounded-xl border border-border bg-muted/10 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all text-sm leading-relaxed"
+                        className="w-full min-h-[120px] p-4 rounded-xl border border-border bg-muted/10 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all text-sm leading-relaxed"
                         placeholder="เขียนเนื้อหาที่คุณต้องการแชร์กับผู้สมัคร..."
                         required
                       />
