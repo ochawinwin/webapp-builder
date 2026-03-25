@@ -184,7 +184,7 @@ export function CandidateRegisterForm() {
                 <Input
                   type={showPassword ? "text" : "password"}
                   name="password"
-                  placeholder="รหัสผ่าน (อย่างน้อย 8 ตัว)"
+                  placeholder="รหัสผ่าน (8+ ตัว, มีตัวพิมพ์ใหญ่และตัวเลข)"
                   required
                   minLength={8}
                   className="h-11 pr-10"

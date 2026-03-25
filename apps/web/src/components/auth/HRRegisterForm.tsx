@@ -159,16 +159,42 @@ export function HRRegisterForm() {
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-sm font-semibold flex items-center gap-2 text-slate-700">
-                <User className="w-4 h-4 text-primary" /> ชื่อ-นามสกุล ผู้ประสานงาน
-              </label>
-              <Input
-                name="admin_name"
-                placeholder="สมปอง ขยันสมัคร"
-                required
-                className="h-11 border-slate-200"
-              />
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <label className="text-sm font-semibold text-slate-700">อุตสาหกรรม *</label>
+                <select
+                  name="industry"
+                  required
+                  className="w-full h-11 px-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
+                >
+                  <option value="">เลือก</option>
+                  <option value="Software & Technology">Software & Technology</option>
+                  <option value="Finance & Banking">Finance & Banking</option>
+                  <option value="Education">Education</option>
+                  <option value="Healthcare">Healthcare</option>
+                  <option value="E-commerce">E-commerce</option>
+                  <option value="Manufacturing">Manufacturing</option>
+                  <option value="Consulting">Consulting</option>
+                  <option value="Media & Entertainment">Media & Entertainment</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-semibold text-slate-700">ขนาดองค์กร *</label>
+                <select
+                  name="size"
+                  required
+                  className="w-full h-11 px-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
+                >
+                  <option value="">เลือก</option>
+                  <option value="1-10">1-10 คน</option>
+                  <option value="11-50">11-50 คน</option>
+                  <option value="51-200">51-200 คน</option>
+                  <option value="201-500">201-500 คน</option>
+                  <option value="501-1000">501-1,000 คน</option>
+                  <option value="1000+">1,000+ คน</option>
+                </select>
+              </div>
             </div>
 
             <div className="space-y-1.5">
@@ -192,7 +218,7 @@ export function HRRegisterForm() {
                 <Input
                   type={showPassword ? "text" : "password"}
                   name="password"
-                  placeholder="รหัสผ่าน (อย่างน้อย 8 ตัว)"
+                  placeholder="รหัสผ่าน (8+ ตัว, มีตัวพิมพ์ใหญ่และตัวเลข)"
                   required
                   minLength={8}
                   className="h-11 border-slate-200 pr-10"

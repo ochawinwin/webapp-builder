@@ -66,7 +66,7 @@ export async function registerCandidateAction(
     const raw = {
       email: formData.get("email"),
       password: formData.get("password"),
-      confirmPassword: formData.get("confirmPassword"),
+      confirmPassword: formData.get("confirm_password"),
       first_name: formData.get("first_name"),
       last_name: formData.get("last_name"),
     };
@@ -115,7 +115,7 @@ export async function registerCompanyAction(
     const raw = {
       email: formData.get("email"),
       password: formData.get("password"),
-      confirmPassword: formData.get("confirmPassword"),
+      confirmPassword: formData.get("confirm_password"),
       company_name: formData.get("company_name"),
       industry: formData.get("industry"),
       size: formData.get("size"),
