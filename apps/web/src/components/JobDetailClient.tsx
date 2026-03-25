@@ -101,7 +101,7 @@ export function JobDetailClient({
   const prescreenQuestions = (job.prescreen_questions ?? []).map((q: any) => ({
     id: q.id,
     question: q.question,
-    type: q.question_type as "text" | "long_text" | "choice",
+    type: q.type as "text" | "long_text" | "choice",
     options: q.options ?? [],
   }));
 
