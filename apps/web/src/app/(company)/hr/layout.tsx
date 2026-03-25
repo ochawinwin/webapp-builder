@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getAuthUser } from "@/lib/data/auth";
 import { getCompanyByMembership } from "@/lib/data/companies";
 import { logoutAction } from "@/app/actions/auth.actions";
-import { Sidebar } from "@futurecareer/ui";
+import { Sidebar, Avatar } from "@futurecareer/ui";
 import Link from "next/link";
 import {
   LayoutDashboard,
@@ -63,14 +63,28 @@ export default async function HRLayout({
             <span className="text-muted-foreground">/</span>
             <span className="text-xs font-semibold text-slate-700">{membership.company.name}</span>
           </div>
-          <form action={logoutAction}>
-            <button
-              type="submit"
-              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-destructive transition-colors"
+          <div className="flex items-center gap-4">
+            <Link
+              href="/hr/account"
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+              title="แก้ไขโปรไฟล์"
             >
-              <LogOut className="w-4 h-4" /> ออกจากระบบ
-            </button>
-          </form>
+              <Avatar
+                src={auth.profile.avatar_url ?? undefined}
+                fallback={userName}
+                size="sm"
+              />
+              <span className="text-xs font-semibold text-slate-700 hidden sm:block">{userName}</span>
+            </Link>
+            <form action={logoutAction}>
+              <button
+                type="submit"
+                className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-destructive transition-colors"
+              >
+                <LogOut className="w-4 h-4" /> ออกจากระบบ
+              </button>
+            </form>
+          </div>
         </header>
 
         {/* Main scrollable area */}

@@ -430,7 +430,7 @@ export type Database = {
       job_status: "open" | "closed"
       job_type: "full_time" | "part_time" | "contract" | "internship"
       member_role: "admin" | "recruiter"
-      prescreen_type: "text" | "choice"
+      prescreen_type: "text" | "choice" | "long_text"
       tag_type: "skill" | "industry" | "level" | "location" | "position"
       user_type: "seeker" | "company"
     }
@@ -571,7 +571,7 @@ export const Constants = {
       job_status: ["open", "closed"],
       job_type: ["full_time", "part_time", "contract", "internship"],
       member_role: ["admin", "recruiter"],
-      prescreen_type: ["text", "choice"],
+      prescreen_type: ["text", "choice", "long_text"],
       tag_type: ["skill", "industry", "level", "location", "position"],
       user_type: ["seeker", "company"],
     },

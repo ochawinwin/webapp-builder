@@ -3,7 +3,7 @@ import { z } from "zod";
 const prescreenQuestionSchema = z.object({
   id: z.string().optional(),
   order_index: z.number().int().min(0),
-  type: z.enum(["text", "choice"]),
+  type: z.enum(["text", "long_text", "choice"]),
   question: z.string().min(1, "Question is required").max(500),
   options: z
     .array(z.string().min(1).max(200))
