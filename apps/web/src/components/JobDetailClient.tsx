@@ -300,7 +300,7 @@ export function JobDetailClient({
                         คุณได้ส่งใบสมัครให้บริษัทนี้แล้ว
                       </p>
                     </div>
-                    <Link href="/profile" className="w-full">
+                    <Link href="/profile?tab=applications" className="w-full">
                       <Button
                         variant="outline"
                         className="w-full border-success text-success hover:bg-success/5"

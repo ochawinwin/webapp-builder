@@ -10,6 +10,8 @@ export const updateProfileSchema = z.object({
     .max(20)
     .optional()
     .or(z.literal("")),
+  location: z.string().max(200).optional().or(z.literal("")),
+  website: z.string().max(500).optional().or(z.literal("")),
 });
 
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;

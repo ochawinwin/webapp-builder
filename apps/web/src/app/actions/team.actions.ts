@@ -51,7 +51,8 @@ export async function inviteMemberAction(
     const admin = createAdminClient();
 
     // Check if a user with this email already exists — use targeted lookup, not listUsers()
-    const { data: userByEmail } = await admin.auth.admin.getUserByEmail(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: userByEmail } = await (admin.auth.admin as any).getUserByEmail(
       parsed.data.email
     );
     const existingAuthUser = userByEmail?.user ?? null;

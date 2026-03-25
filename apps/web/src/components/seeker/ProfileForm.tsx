@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button, Card, Input, Badge, cn } from "@futurecareer/ui";
 import {
@@ -8,7 +9,7 @@ import {
   uploadResumeAction,
   uploadAvatarAction,
 } from "@/app/actions/profile.actions";
-import { logoutAction } from "@/app/actions/auth.actions";
+import { logoutAction, updatePasswordAction } from "@/app/actions/auth.actions";
 import { toast } from "sonner";
 import {
   User,
@@ -26,6 +27,9 @@ import {
   LogOut,
   ChevronRight,
   Plus,
+  Lock,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -54,6 +58,7 @@ interface ProfileFormProps {
   email: string;
   profile: Profile | null;
   applications: Application[];
+  savedJobs?: unknown[];
 }
 
 const statusLabel: Record<string, string> = {
@@ -77,11 +82,37 @@ export function ProfileForm({
   email,
   profile,
   applications,
+  savedJobs: _savedJobs,
 }: ProfileFormProps) {
-  const [activeTab, setActiveTab] = useState("profile");
+  const searchParams = useSearchParams();
+  const initialTab = searchParams.get("tab") ?? "profile";
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [isPending, startTransition] = useTransition();
   const [isResumeUploading, startResumeTransition] = useTransition();
   const [isAvatarUploading, startAvatarTransition] = useTransition();
+  const [isPasswordPending, startPasswordTransition] = useTransition();
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const handlePasswordChange = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const password = formData.get("password") as string;
+    const confirm = formData.get("confirm_password") as string;
+    if (password !== confirm) {
+      toast.error("รหัสผ่านไม่ตรงกัน");
+      return;
+    }
+    startPasswordTransition(async () => {
+      const result = await updatePasswordAction(formData);
+      if (result.success) {
+        toast.success("เปลี่ยนรหัสผ่านสำเร็จ!");
+        (e.target as HTMLFormElement).reset();
+      } else {
+        toast.error(result.error ?? "เกิดข้อผิดพลาด");
+      }
+    });
+  };
 
   const resumeFileName = profile?.resume_url
     ? profile.resume_url.split("/").pop() ?? null
@@ -530,6 +561,64 @@ export function ProfileForm({
                     </h2>
 
                     <div className="space-y-10 font-sarabun">
+                      {/* Change password */}
+                      <section>
+                        <div className="flex items-center gap-2 mb-6">
+                          <Lock className="w-5 h-5 text-primary" />
+                          <h3 className="text-lg font-bold font-kanit">
+                            เปลี่ยนรหัสผ่าน
+                          </h3>
+                        </div>
+                        <form onSubmit={handlePasswordChange} className="space-y-4 max-w-md">
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold">รหัสผ่านใหม่</label>
+                            <div className="relative">
+                              <Input
+                                type={showNewPassword ? "text" : "password"}
+                                name="password"
+                                placeholder="รหัสผ่านใหม่ (8+ ตัว, มีตัวพิมพ์ใหญ่และตัวเลข)"
+                                required
+                                minLength={8}
+                                className="h-11 pr-10"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setShowNewPassword(!showNewPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1"
+                              >
+                                {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                              </button>
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold">ยืนยันรหัสผ่านใหม่</label>
+                            <div className="relative">
+                              <Input
+                                type={showConfirmPassword ? "text" : "password"}
+                                name="confirm_password"
+                                placeholder="ป้อนรหัสผ่านอีกครั้ง"
+                                required
+                                className="h-11 pr-10"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1"
+                              >
+                                {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                              </button>
+                            </div>
+                          </div>
+                          <Button type="submit" disabled={isPasswordPending} className="gap-2">
+                            <Lock className="w-4 h-4" />
+                            {isPasswordPending ? "กำลังบันทึก..." : "เปลี่ยนรหัสผ่าน"}
+                          </Button>
+                        </form>
+                      </section>
+
+                      <hr className="border-border" />
+
+                      {/* Danger zone */}
                       <section className="p-6 bg-destructive/5 rounded-3xl border border-destructive/10">
                         <div className="flex items-center gap-2 text-destructive mb-4">
                           <AlertCircle className="w-5 h-5" />

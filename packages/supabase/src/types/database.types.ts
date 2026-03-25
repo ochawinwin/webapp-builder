@@ -331,9 +331,11 @@ export type Database = {
           first_name: string | null
           id: string
           last_name: string | null
+          location: string | null
           phone: string | null
           resume_url: string | null
           user_type: Database["public"]["Enums"]["user_type"]
+          website: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -342,9 +344,11 @@ export type Database = {
           first_name?: string | null
           id: string
           last_name?: string | null
+          location?: string | null
           phone?: string | null
           resume_url?: string | null
           user_type?: Database["public"]["Enums"]["user_type"]
+          website?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -353,9 +357,11 @@ export type Database = {
           first_name?: string | null
           id?: string
           last_name?: string | null
+          location?: string | null
           phone?: string | null
           resume_url?: string | null
           user_type?: Database["public"]["Enums"]["user_type"]
+          website?: string | null
         }
         Relationships: []
       }

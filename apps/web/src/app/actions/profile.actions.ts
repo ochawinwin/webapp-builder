@@ -28,6 +28,8 @@ export async function updateProfileAction(
       last_name: formData.get("last_name"),
       bio: formData.get("bio") ?? undefined,
       phone: formData.get("phone") ?? undefined,
+      location: formData.get("location") ?? undefined,
+      website: formData.get("website") ?? undefined,
     };
 
     const parsed = updateProfileSchema.safeParse(raw);
@@ -38,11 +40,14 @@ export async function updateProfileAction(
       };
     }
 
-    const updateData: TablesUpdate<"profiles"> = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updateData: any = {
       first_name: parsed.data.first_name,
       last_name: parsed.data.last_name,
       bio: parsed.data.bio ?? null,
       phone: parsed.data.phone ?? null,
+      location: parsed.data.location ?? null,
+      website: parsed.data.website ?? null,
     };
 
     const { error } = await supabase
