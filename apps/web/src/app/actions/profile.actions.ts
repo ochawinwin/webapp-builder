@@ -40,8 +40,7 @@ export async function updateProfileAction(
       };
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const updateData: any = {
+    const updateData: TablesUpdate<"profiles"> = {
       first_name: parsed.data.first_name,
       last_name: parsed.data.last_name,
       bio: parsed.data.bio ?? null,
@@ -52,8 +51,7 @@ export async function updateProfileAction(
 
     const { error } = await supabase
       .from("profiles")
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .update(updateData as any)
+      .update(updateData)
       .eq("id", user.id);
 
     if (error) {
