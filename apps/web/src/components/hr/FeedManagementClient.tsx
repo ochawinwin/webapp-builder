@@ -27,6 +27,7 @@ export function FeedManagementClient({ initialPosts, companyId }: FeedManagement
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [selectedImageName, setSelectedImageName] = useState<string | null>(null);
 
   const filteredPosts = posts.filter(
     (p) =>
@@ -43,6 +44,7 @@ export function FeedManagementClient({ initialPosts, companyId }: FeedManagement
       const result = await createPostAction(formData);
       if (result.success) {
         setIsCreating(false);
+        setSelectedImageName(null);
         toast.success("สร้างโพสต์ใหม่สำเร็จ!");
         // Optimistically add the post
         const newPost: CompanyPost = {
@@ -126,6 +128,7 @@ export function FeedManagementClient({ initialPosts, companyId }: FeedManagement
                   onClick={() => {
                     setIsCreating(false);
                     setError(null);
+                    setSelectedImageName(null);
                   }}
                 >
                   ยกเลิก
@@ -149,8 +152,20 @@ export function FeedManagementClient({ initialPosts, companyId }: FeedManagement
                     <label className="text-sm font-bold">รูปภาพประกอบ (ไม่บังคับ)</label>
                     <label className="h-[120px] border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-2 text-muted-foreground hover:bg-muted/30 transition-colors cursor-pointer group">
                       <ImageIcon className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                      <span className="text-xs font-bold uppercase">อัปโหลดรูปภาพ</span>
-                      <input type="file" name="image" accept="image/jpeg,image/png,image/webp" className="hidden" />
+                      {selectedImageName ? (
+                        <span className="text-xs font-bold text-primary text-center px-2 break-all line-clamp-2">
+                          {selectedImageName}
+                        </span>
+                      ) : (
+                        <span className="text-xs font-bold uppercase">อัปโหลดรูปภาพ</span>
+                      )}
+                      <input
+                        type="file"
+                        name="image"
+                        accept="image/jpeg,image/png,image/webp"
+                        className="hidden"
+                        onChange={(e) => setSelectedImageName(e.target.files?.[0]?.name ?? null)}
+                      />
                     </label>
                   </div>
                 </div>
@@ -166,6 +181,7 @@ export function FeedManagementClient({ initialPosts, companyId }: FeedManagement
                     onClick={() => {
                       setIsCreating(false);
                       setError(null);
+                      setSelectedImageName(null);
                     }}
                   >
                     ยกเลิก

@@ -85,6 +85,34 @@ export function JobManagementClient({
     );
   };
 
+  const addOption = (questionId: string) => {
+    setPrescreenQuestions(
+      prescreenQuestions.map((q) =>
+        q.id === questionId ? { ...q, options: [...q.options, ""] } : q
+      )
+    );
+  };
+
+  const updateOption = (questionId: string, optionIdx: number, value: string) => {
+    setPrescreenQuestions(
+      prescreenQuestions.map((q) =>
+        q.id === questionId
+          ? { ...q, options: q.options.map((o, i) => (i === optionIdx ? value : o)) }
+          : q
+      )
+    );
+  };
+
+  const removeOption = (questionId: string, optionIdx: number) => {
+    setPrescreenQuestions(
+      prescreenQuestions.map((q) =>
+        q.id === questionId
+          ? { ...q, options: q.options.filter((_, i) => i !== optionIdx) }
+          : q
+      )
+    );
+  };
+
   const handleCreateJob = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
@@ -107,7 +135,7 @@ export function JobManagementClient({
         order_index: idx,
         type: q.type,
         question: q.question,
-        options: q.type === "choice" && q.options.length > 0 ? q.options : null,
+        options: q.type === "choice" && q.options.length > 0 ? q.options : undefined,
       }));
     formData.set("prescreen_questions", JSON.stringify(questions));
 
@@ -451,6 +479,37 @@ export function JobManagementClient({
                       </select>
                     </div>
                   </div>
+                  {q.type === "choice" && (
+                    <div className="mt-3 space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        ตัวเลือก (อย่างน้อย 2 ข้อ)
+                      </label>
+                      {q.options.map((opt, optIdx) => (
+                        <div key={optIdx} className="flex gap-2">
+                          <Input
+                            placeholder={`ตัวเลือกที่ ${optIdx + 1}`}
+                            value={opt}
+                            onChange={(e) => updateOption(q.id, optIdx, e.target.value)}
+                            className="h-9 text-sm"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeOption(q.id, optIdx)}
+                            className="text-muted-foreground hover:text-destructive p-1"
+                          >
+                            <XCircle className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() => addOption(q.id)}
+                        className="text-xs text-primary font-bold hover:underline flex items-center gap-1 mt-1"
+                      >
+                        <Plus className="w-3 h-3" /> เพิ่มตัวเลือก
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

@@ -68,10 +68,10 @@ export function Footer() {
             </h4>
             <ul className="space-y-2.5">
               {[
-                { href: "/jobs", label: "ค้นหางาน" },
+                { href: "/search", label: "ค้นหางาน" },
                 { href: "/register", label: "สมัครสมาชิก" },
                 { href: "/profile", label: "สร้างโปรไฟล์" },
-                { href: "/jobs?type=featured", label: "งานแนะนำ" },
+                { href: "/search?featured=true", label: "งานแนะนำ" },
               ].map((link) => (
                 <li key={link.href}>
                   <Link

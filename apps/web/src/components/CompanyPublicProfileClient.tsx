@@ -9,9 +9,7 @@ import {
   MapPin,
   Users,
   Calendar,
-  MessageSquare,
   Share2,
-  Heart,
   ChevronRight,
   Megaphone,
   CheckCircle2,
@@ -120,12 +118,6 @@ export function CompanyPublicProfileClient({
               </div>
             </div>
             <div className="flex items-center gap-3 relative z-10 md:pb-2 self-center md:self-auto">
-              <Button
-                variant="outline"
-                className="bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white hover:text-slate-900 font-bold gap-2"
-              >
-                <Heart className="w-5 h-5" /> ติดตามบริษัท
-              </Button>
               <Button
                 variant="outline"
                 size="sm"
@@ -386,22 +378,6 @@ export function CompanyPublicProfileClient({
               </p>
             </Card>
 
-            <div className="p-6 rounded-3xl bg-secondary/10 border border-secondary/30 relative overflow-hidden group cursor-pointer">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-secondary/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform"></div>
-              <div className="relative z-10 flex flex-col items-center text-center gap-4">
-                <MessageSquare className="w-10 h-10 text-secondary-foreground" />
-                <div>
-                  <h4 className="font-bold font-kanit text-lg">ร่วมงานกับเรา</h4>
-                  <p className="text-xs text-muted-foreground font-sarabun mt-1">
-                    ส่งคำถามถึง HR
-                    หรือปรึกษาเกี่ยวกับวัฒนธรรมองค์กรของเราได้ที่นี่
-                  </p>
-                </div>
-                <Button variant="secondary" className="w-full font-bold">
-                  สอบถามรายละเอียด
-                </Button>
-              </div>
-            </div>
           </div>
         </div>
       </div>

@@ -10,13 +10,12 @@ import {
   uploadAvatarAction,
 } from "@/app/actions/profile.actions";
 import { logoutAction, updatePasswordAction } from "@/app/actions/auth.actions";
+import { toggleSavedJobAction } from "@/app/actions/saved-jobs.actions";
 import { toast } from "sonner";
 import {
   User,
-  Mail,
   FileText,
   Upload,
-  Trash2,
   Edit2,
   CheckCircle2,
   AlertCircle,
@@ -26,12 +25,13 @@ import {
   Settings,
   LogOut,
   ChevronRight,
-  Plus,
   Lock,
   Eye,
   EyeOff,
+  Heart,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import type { SavedJobEntry } from "@/lib/data/saved-jobs";
 
 interface Application {
   id: string;
@@ -58,7 +58,7 @@ interface ProfileFormProps {
   email: string;
   profile: Profile | null;
   applications: Application[];
-  savedJobs?: unknown[];
+  savedJobs: SavedJobEntry[];
 }
 
 const statusLabel: Record<string, string> = {
@@ -77,12 +77,19 @@ const statusColorMap: Record<string, string> = {
   rejected: "text-destructive bg-destructive/10 border-destructive/20",
 };
 
+const JOB_TYPE_LABELS: Record<string, string> = {
+  full_time: "Full-time",
+  part_time: "Part-time",
+  contract: "Contract",
+  internship: "Internship",
+};
+
 export function ProfileForm({
   userId,
   email,
   profile,
   applications,
-  savedJobs: _savedJobs,
+  savedJobs: initialSavedJobs,
 }: ProfileFormProps) {
   const searchParams = useSearchParams();
   const initialTab = searchParams.get("tab") ?? "profile";
@@ -93,6 +100,9 @@ export function ProfileForm({
   const [isPasswordPending, startPasswordTransition] = useTransition();
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [savedJobs, setSavedJobs] = useState(initialSavedJobs);
+
+  void userId;
 
   const handlePasswordChange = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -165,14 +175,26 @@ export function ProfileForm({
     });
   };
 
+  const handleUnsave = (jobId: string) => {
+    startTransition(async () => {
+      const result = await toggleSavedJobAction(jobId);
+      if (!result.saved) {
+        setSavedJobs((prev) => prev.filter((s) => s.job_id !== jobId));
+        toast.success("ยกเลิกการบันทึกแล้ว");
+      }
+    });
+  };
+
   const SidebarItem = ({
     id,
     icon: Icon,
     label,
+    count,
   }: {
     id: string;
     icon: React.ElementType;
     label: string;
+    count?: number;
   }) => (
     <button
       onClick={() => setActiveTab(id)}
@@ -192,7 +214,20 @@ export function ProfileForm({
         )}
       />
       <span className="font-bold text-sm font-kanit">{label}</span>
-      {activeTab === id && <ChevronRight className="w-4 h-4 ml-auto" />}
+      {count !== undefined && count > 0 ? (
+        <span
+          className={cn(
+            "ml-auto text-xs font-bold px-2 py-0.5 rounded-full",
+            activeTab === id
+              ? "bg-white/20 text-white"
+              : "bg-primary/10 text-primary"
+          )}
+        >
+          {count}
+        </span>
+      ) : (
+        activeTab === id && <ChevronRight className="w-4 h-4 ml-auto" />
+      )}
     </button>
   );
 
@@ -252,6 +287,13 @@ export function ProfileForm({
                 id="applications"
                 icon={Briefcase}
                 label="สถานะการสมัครงาน"
+                count={applications.length}
+              />
+              <SidebarItem
+                id="saved"
+                icon={Heart}
+                label="งานที่บันทึกไว้"
+                count={savedJobs.length}
               />
               <SidebarItem id="settings" icon={Settings} label="ตั้งค่าบัญชี" />
               <hr className="my-4 border-border" />
@@ -547,6 +589,103 @@ export function ProfileForm({
                 </motion.div>
               )}
 
+              {activeTab === "saved" && (
+                <motion.div
+                  key="saved"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="space-y-6"
+                >
+                  <Card className="p-8 border-none shadow-sm">
+                    <h2 className="text-2xl font-bold font-kanit mb-8">
+                      งานที่บันทึกไว้
+                    </h2>
+
+                    <div className="space-y-4 font-sarabun">
+                      {savedJobs.length > 0 ? (
+                        savedJobs.map((entry) => (
+                          <div
+                            key={entry.id}
+                            className="flex flex-col md:flex-row md:items-center justify-between p-5 border border-border rounded-2xl hover:border-primary/30 transition-all group"
+                          >
+                            <div className="flex items-center gap-4 mb-4 md:mb-0">
+                              <div className="w-12 h-12 rounded-xl border border-border flex items-center justify-center shrink-0 overflow-hidden bg-white">
+                                {entry.job?.company?.logo_url ? (
+                                  <img
+                                    src={entry.job.company.logo_url}
+                                    alt={entry.job.company.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <Briefcase className="w-5 h-5 text-muted-foreground" />
+                                )}
+                              </div>
+                              <div>
+                                <h4 className="font-bold group-hover:text-primary transition-colors">
+                                  {entry.job?.title ?? "ตำแหน่งงาน"}
+                                </h4>
+                                <p className="text-sm text-muted-foreground">
+                                  {entry.job?.company?.name}
+                                  {entry.job?.location && (
+                                    <span> · {entry.job.location}</span>
+                                  )}
+                                </p>
+                                <div className="flex items-center gap-2 mt-1">
+                                  {entry.job?.job_type && (
+                                    <span className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-full font-bold">
+                                      {JOB_TYPE_LABELS[entry.job.job_type] ?? entry.job.job_type}
+                                    </span>
+                                  )}
+                                  {entry.job?.salary && (
+                                    <span className="text-xs text-muted-foreground">
+                                      {entry.job.salary}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <button
+                                onClick={() => handleUnsave(entry.job_id)}
+                                className="p-2 rounded-xl text-destructive hover:bg-destructive/10 transition-colors"
+                                aria-label="ยกเลิกบันทึก"
+                              >
+                                <Heart className="w-5 h-5" fill="currentColor" />
+                              </button>
+                              <Link href={`/jobs/${entry.job_id}`}>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="gap-1.5 font-bold"
+                                >
+                                  ดูงาน <ChevronRight className="w-4 h-4" />
+                                </Button>
+                              </Link>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center py-16 bg-muted/20 rounded-3xl border-2 border-dashed border-border">
+                          <Heart className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
+                          <p className="text-muted-foreground font-bold mb-1">
+                            ยังไม่มีงานที่บันทึกไว้
+                          </p>
+                          <p className="text-sm text-muted-foreground mb-4">
+                            กดไอคอนหัวใจในหน้ารายละเอียดงานเพื่อบันทึก
+                          </p>
+                          <Link href="/search">
+                            <Button variant="outline" className="font-bold">
+                              ค้นหางาน
+                            </Button>
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+                  </Card>
+                </motion.div>
+              )}
+
               {activeTab === "settings" && (
                 <motion.div
                   key="settings"
@@ -561,7 +700,6 @@ export function ProfileForm({
                     </h2>
 
                     <div className="space-y-10 font-sarabun">
-                      {/* Change password */}
                       <section>
                         <div className="flex items-center gap-2 mb-6">
                           <Lock className="w-5 h-5 text-primary" />
@@ -618,7 +756,6 @@ export function ProfileForm({
 
                       <hr className="border-border" />
 
-                      {/* Danger zone */}
                       <section className="p-6 bg-destructive/5 rounded-3xl border border-destructive/10">
                         <div className="flex items-center gap-2 text-destructive mb-4">
                           <AlertCircle className="w-5 h-5" />
