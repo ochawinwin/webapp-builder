@@ -41,7 +41,7 @@ const features = [
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col w-full overflow-hidden">
+    <div className="flex flex-col w-full overflow-x-hidden isolate">
       {/* Hero Section */}
       <section className="relative pt-20 pb-24 lg:pt-32 lg:pb-40 bg-gradient-to-br from-white to-primary/5">
         <div className="container mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">

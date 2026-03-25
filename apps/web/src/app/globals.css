@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* Scan packages/ui for Tailwind classes */
-@source "../../../packages/ui/src/**/*.{ts,tsx}";
+@source "../../../../packages/ui/src/**/*.{ts,tsx}";
 
 /* Design tokens from design-system.md */
 :root {
@@ -77,11 +77,12 @@
 }
 
 /* Responsive nav utilities — used by packages/ui/Header to avoid Tailwind @source scanning issues */
-.nav-desktop-only { display: none; }
-.nav-mobile-only  { display: block; }
+/* !important needed because Tailwind utility classes (flex, block) override plain class selectors */
+.nav-desktop-only { display: none !important; }
+.nav-mobile-only  { display: block !important; }
 
 @media (min-width: 768px) {
-  .nav-desktop-only { display: flex; }
+  .nav-desktop-only { display: flex !important; }
   .nav-mobile-only  { display: none !important; }
 }
 
