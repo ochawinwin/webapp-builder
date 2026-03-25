@@ -189,12 +189,13 @@ Use `.env` for environment variables, copy from `.env.example`
 
 ### Testing
 
-For all sorts of testing (UI testing, visual testing, end-to-end testing, browser testing), use the `agent-browser` tools.
-
-If you are unsure about available commands or how to use them, run:
+For all browser/UI/visual/e2e testing, use the `agent-browser` CLI via the Bash tool.
 
 ```bash
-agent-browser --help
+agent-browser --help            # see all commands
+agent-browser open <url>        # navigate to URL
+agent-browser screenshot [path] # take screenshot
+agent-browser snapshot          # accessibility tree (for AI navigation)
 ```
 
 
