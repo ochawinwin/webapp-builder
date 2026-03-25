@@ -10,6 +10,7 @@ import {
   MessageSquare,
   Users,
   Building2,
+  UserCircle,
   LogOut,
 } from "lucide-react";
 import type { Metadata } from "next";
@@ -22,6 +23,7 @@ const NAV_ITEMS = [
   { href: "/hr/feed", label: "Company Feed", icon: <MessageSquare className="w-5 h-5" /> },
   { href: "/hr/team", label: "จัดการทีม", icon: <Users className="w-5 h-5" /> },
   { href: "/hr/profile", label: "ตั้งค่าบริษัท", icon: <Building2 className="w-5 h-5" /> },
+  { href: "/hr/account", label: "บัญชีของฉัน", icon: <UserCircle className="w-5 h-5" /> },
 ];
 
 export default async function HRLayout({
