@@ -1,0 +1,19 @@
+{
+  "name": "futurecareer",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "jsdom": "^29.0.1",
+    "turbo": "^2",
+    "typescript": "^5",
+    "vitest": "^4.1.1"
+  },
+  "packageManager": "pnpm@9.15.0"
+}
