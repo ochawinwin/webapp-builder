@@ -26,7 +26,7 @@ interface NavLink {
 }
 
 function getNavLinks(user: NavUser | null | undefined): NavLink[] {
-  if (!user) return [];
+  if (!user) return [{ href: "/search", label: "ค้นหางาน" }];
   if (user.role === "company") {
     return [
       { href: "/hr/dashboard", label: "แดชบอร์ด" },

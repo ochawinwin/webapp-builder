@@ -30,14 +30,23 @@ interface JobDetailClientProps {
   resumeSignedUrl: string | null;
 }
 
-function formatSalary(salary: unknown): string {
-  if (!salary || typeof salary !== "object") return "ไม่ระบุเงินเดือน";
-  const s = salary as { min?: number; max?: number };
-  if (s.min && s.max)
-    return `${s.min.toLocaleString()} - ${s.max.toLocaleString()} บาท`;
-  if (s.min) return `${s.min.toLocaleString()}+ บาท`;
-  if (s.max) return `สูงสุด ${s.max.toLocaleString()} บาท`;
-  return "ไม่ระบุเงินเดือน";
+const JOB_TYPE_LABELS: Record<string, string> = {
+  full_time: "Full-time",
+  part_time: "Part-time",
+  contract: "Contract",
+  internship: "Internship",
+};
+
+const JOB_LEVEL_LABELS: Record<string, string> = {
+  junior: "Junior",
+  mid: "Mid-level",
+  senior: "Senior",
+  lead: "Lead",
+};
+
+function formatSalary(salary: string | null | undefined): string {
+  if (!salary) return "ไม่ระบุเงินเดือน";
+  return salary;
 }
 
 function timeAgo(dateString: string): string {
@@ -161,7 +170,7 @@ export function JobDetailClient({
                   </p>
                   <p className="font-bold flex items-center justify-center gap-1.5">
                     <Briefcase className="w-4 h-4 text-primary" />{" "}
-                    {job.job_type}
+                    {JOB_TYPE_LABELS[job.job_type ?? ""] ?? job.job_type}
                   </p>
                 </div>
                 <div className="text-center">
@@ -178,7 +187,7 @@ export function JobDetailClient({
                     ระดับงาน
                   </p>
                   <p className="font-bold flex items-center justify-center gap-1.5">
-                    <Star className="w-4 h-4 text-secondary" /> {job.level}
+                    <Star className="w-4 h-4 text-secondary" /> {JOB_LEVEL_LABELS[job.level ?? ""] ?? job.level}
                   </p>
                 </div>
                 <div className="text-center">
