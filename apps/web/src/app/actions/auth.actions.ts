@@ -41,6 +41,12 @@ export async function loginAction(
     });
 
     if (error) {
+      if (error.code === "email_not_confirmed") {
+        return {
+          success: false,
+          error: "กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ กรุณาตรวจสอบกล่องจดหมายของคุณ",
+        };
+      }
       return {
         success: false,
         error: "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
