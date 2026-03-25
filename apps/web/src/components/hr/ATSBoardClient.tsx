@@ -19,7 +19,6 @@ import {
   MessageSquare,
   Star,
   Clock,
-  PlusCircle,
 } from "lucide-react";
 import {
   DndContext,
@@ -75,6 +74,7 @@ function CandidateCard({
       style={style}
       {...listeners}
       {...attributes}
+      suppressHydrationWarning
       className={`bg-white p-4 rounded-xl border border-border shadow-sm hover:shadow-md transition-all cursor-grab active:cursor-grabbing group ${
         isDragging ? "opacity-40" : ""
       }`}
@@ -155,9 +155,6 @@ function KanbanColumn({
             {candidates.length}
           </Badge>
         </div>
-        <button className="text-muted-foreground hover:text-foreground p-1">
-          <PlusCircle className="w-4 h-4" />
-        </button>
       </div>
 
       <div className="flex-1 p-3 flex flex-col gap-3 overflow-y-auto max-h-[calc(100vh-300px)]">
