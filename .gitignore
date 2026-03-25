@@ -55,8 +55,5 @@ coverage/
 *.local
 .vercel
 
-# Claude Code local config
-.claude/
-
 # mcp
 .mcp.json
