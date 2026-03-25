@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Card, Badge } from "@futurecareer/ui";
 import { ApplyModal } from "@/components/ApplyModal";
+import { toggleSavedJobAction } from "@/app/actions/saved-jobs.actions";
 import {
   CheckCircle2,
   Briefcase,
@@ -11,11 +12,9 @@ import {
   Clock,
   DollarSign,
   Star,
-  HelpCircle,
   Building2,
   Share2,
   Heart,
-  ShieldCheck,
   ChevronLeft,
 } from "lucide-react";
 import Link from "next/link";
@@ -26,6 +25,7 @@ interface JobDetailClientProps {
   job: JobWithDetails;
   isAlreadyApplied: boolean;
   isLoggedIn: boolean;
+  isSaved: boolean;
   resumeFileName: string | null;
   resumeSignedUrl: string | null;
 }
@@ -63,12 +63,15 @@ export function JobDetailClient({
   job,
   isAlreadyApplied,
   isLoggedIn,
+  isSaved,
   resumeFileName,
   resumeSignedUrl,
 }: JobDetailClientProps) {
   const router = useRouter();
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const [applied, setApplied] = useState(isAlreadyApplied);
+  const [saved, setSaved] = useState(isSaved);
+  const [isPending, startTransition] = useTransition();
 
   const handleApplyClick = () => {
     if (!isLoggedIn) {
@@ -77,6 +80,22 @@ export function JobDetailClient({
       return;
     }
     setIsApplyModalOpen(true);
+  };
+
+  const handleSaveClick = () => {
+    if (!isLoggedIn) {
+      router.push(`/register?next=/jobs/${job.id}`);
+      return;
+    }
+    startTransition(async () => {
+      const result = await toggleSavedJobAction(job.id);
+      if (result.error) {
+        toast.error("เกิดข้อผิดพลาด กรุณาลองใหม่");
+        return;
+      }
+      setSaved(result.saved);
+      toast.success(result.saved ? "บันทึกงานแล้ว" : "ยกเลิกการบันทึกแล้ว");
+    });
   };
 
   const prescreenQuestions = (job.prescreen_questions ?? []).map((q: any) => ({
@@ -146,8 +165,15 @@ export function JobDetailClient({
                     variant="outline"
                     size="sm"
                     className="w-10 h-10 p-0 rounded-full"
+                    onClick={handleSaveClick}
+                    disabled={isPending}
+                    aria-label={saved ? "ยกเลิกบันทึกงาน" : "บันทึกงาน"}
                   >
-                    <Heart className="w-5 h-5" />
+                    <Heart
+                      className="w-5 h-5"
+                      fill={saved ? "currentColor" : "none"}
+                      style={saved ? { color: "var(--destructive)" } : undefined}
+                    />
                   </Button>
                   <Button
                     variant="outline"
@@ -330,19 +356,6 @@ export function JobDetailClient({
               </div>
             </Card>
 
-            <Card className="p-6 bg-secondary/5 border-secondary/20 border">
-              <div className="flex items-center gap-3 mb-3 text-secondary-foreground">
-                <HelpCircle className="w-5 h-5" />
-                <h4 className="font-bold font-kanit">มีคำถามเกี่ยวกับงานนี้?</h4>
-              </div>
-              <p className="text-sm text-muted-foreground font-sarabun leading-relaxed mb-4">
-                หากคุณต้องการสอบถามรายละเอียดเพิ่มเติม
-                สามารถส่งข้อความถาม HR ของบริษัทได้โดยตรง
-              </p>
-              <Button variant="secondary" className="w-full text-xs font-bold">
-                สอบถาม HR
-              </Button>
-            </Card>
           </div>
         </div>
       </div>

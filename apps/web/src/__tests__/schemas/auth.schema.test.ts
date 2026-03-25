@@ -22,7 +22,7 @@ describe("loginSchema", () => {
       password: "secret123",
     });
     expect(result.success).toBe(false);
-    expect(result.error?.errors[0]?.message).toBe("Invalid email address");
+    expect(result.error?.errors[0]?.message).toBe("รูปแบบอีเมลไม่ถูกต้อง");
   });
 
   it("rejects an empty email", () => {
@@ -36,7 +36,7 @@ describe("loginSchema", () => {
       password: "",
     });
     expect(result.success).toBe(false);
-    expect(result.error?.errors[0]?.message).toBe("Password is required");
+    expect(result.error?.errors[0]?.message).toBe("กรุณากรอกรหัสผ่าน");
   });
 });
 
@@ -65,7 +65,7 @@ describe("candidateRegisterSchema", () => {
     const confirmError = result.error?.errors.find(
       (e) => e.path[0] === "confirmPassword"
     );
-    expect(confirmError?.message).toBe("Passwords do not match");
+    expect(confirmError?.message).toBe("รหัสผ่านไม่ตรงกัน");
   });
 
   it("rejects a password shorter than 8 characters", () => {
@@ -75,7 +75,7 @@ describe("candidateRegisterSchema", () => {
       confirmPassword: "Short1",
     });
     expect(result.success).toBe(false);
-    expect(result.error?.errors[0]?.message).toMatch(/8 characters/);
+    expect(result.error?.errors[0]?.message).toMatch(/8 ตัว/);
   });
 
   it("rejects a password without an uppercase letter", () => {
@@ -85,7 +85,7 @@ describe("candidateRegisterSchema", () => {
       confirmPassword: "nouppercase1",
     });
     expect(result.success).toBe(false);
-    expect(result.error?.errors[0]?.message).toMatch(/uppercase/i);
+    expect(result.error?.errors[0]?.message).toMatch(/ตัวพิมพ์ใหญ่/);
   });
 
   it("rejects a password without a number", () => {
@@ -95,7 +95,7 @@ describe("candidateRegisterSchema", () => {
       confirmPassword: "NoNumber!!",
     });
     expect(result.success).toBe(false);
-    expect(result.error?.errors[0]?.message).toMatch(/number/i);
+    expect(result.error?.errors[0]?.message).toMatch(/ตัวเลข/);
   });
 
   it("rejects a missing first_name", () => {
@@ -104,7 +104,7 @@ describe("candidateRegisterSchema", () => {
       first_name: "",
     });
     expect(result.success).toBe(false);
-    expect(result.error?.errors[0]?.message).toMatch(/First name/i);
+    expect(result.error?.errors[0]?.message).toMatch(/กรุณากรอกชื่อ/);
   });
 
   it("rejects a missing last_name", () => {
@@ -113,7 +113,7 @@ describe("candidateRegisterSchema", () => {
       last_name: "",
     });
     expect(result.success).toBe(false);
-    expect(result.error?.errors[0]?.message).toMatch(/Last name/i);
+    expect(result.error?.errors[0]?.message).toMatch(/กรุณากรอกนามสกุล/);
   });
 });
 
@@ -140,7 +140,7 @@ describe("companyRegisterSchema", () => {
       email: "bad-email",
     });
     expect(result.success).toBe(false);
-    expect(result.error?.errors[0]?.message).toBe("Invalid email address");
+    expect(result.error?.errors[0]?.message).toBe("รูปแบบอีเมลไม่ถูกต้อง");
   });
 
   it("rejects a company name shorter than 2 characters", () => {
@@ -149,7 +149,7 @@ describe("companyRegisterSchema", () => {
       company_name: "A",
     });
     expect(result.success).toBe(false);
-    expect(result.error?.errors[0]?.message).toMatch(/Company name/i);
+    expect(result.error?.errors[0]?.message).toMatch(/กรุณากรอกชื่อบริษัท/);
   });
 
   it("rejects when passwords do not match", () => {
@@ -161,7 +161,7 @@ describe("companyRegisterSchema", () => {
     const confirmError = result.error?.errors.find(
       (e) => e.path[0] === "confirmPassword"
     );
-    expect(confirmError?.message).toBe("Passwords do not match");
+    expect(confirmError?.message).toBe("รหัสผ่านไม่ตรงกัน");
   });
 
   it("rejects an invalid company size enum value", () => {

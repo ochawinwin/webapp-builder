@@ -149,12 +149,12 @@ export function HRLoginForm() {
                 <label className="text-sm font-semibold flex items-center gap-2 text-slate-700">
                   <Lock className="w-4 h-4 text-primary" /> รหัสผ่าน
                 </label>
-                <button
-                  type="button"
+                <Link
+                  href="/forgot-password"
                   className="text-xs text-primary font-bold hover:underline"
                 >
                   ลืมรหัสผ่าน?
-                </button>
+                </Link>
               </div>
               <div className="relative">
                 <Input

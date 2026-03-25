@@ -80,10 +80,12 @@ export async function registerCandidateAction(
     }
 
     const supabase = await createServerClient();
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
     const { error } = await supabase.auth.signUp({
       email: parsed.data.email,
       password: parsed.data.password,
       options: {
+        emailRedirectTo: `${appUrl}/auth/callback`,
         data: {
           user_type: "seeker",
           first_name: parsed.data.first_name,
@@ -131,10 +133,12 @@ export async function registerCompanyAction(
 
     // Step 1: Create auth user via server client (triggers handle_new_user)
     const supabase = await createServerClient();
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
     const { data: authData, error: signUpError } = await supabase.auth.signUp({
       email: parsed.data.email,
       password: parsed.data.password,
       options: {
+        emailRedirectTo: `${appUrl}/auth/callback`,
         data: {
           user_type: "company",
         },
@@ -188,6 +192,57 @@ export async function registerCompanyAction(
       success: true,
       data: { message: "กรุณาตรวจสอบอีเมลเพื่อยืนยันตัวตน" },
     };
+  } catch {
+    return { success: false, error: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง" };
+  }
+}
+
+export async function sendPasswordResetAction(
+  formData: FormData
+): Promise<ActionResult> {
+  try {
+    const email = formData.get("email") as string;
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return { success: false, error: "กรุณากรอกอีเมลที่ถูกต้อง" };
+    }
+    const supabase = await createServerClient();
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${appUrl}/auth/callback?next=/auth/update-password`,
+    });
+    if (error) {
+      return { success: false, error: "เกิดข้อผิดพลาด กรุณาลองใหม่" };
+    }
+    return { success: true };
+  } catch {
+    return { success: false, error: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง" };
+  }
+}
+
+export async function updatePasswordAction(
+  formData: FormData
+): Promise<ActionResult> {
+  try {
+    const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirm_password") as string;
+    if (!password || password.length < 8) {
+      return { success: false, error: "รหัสผ่านต้องมีอย่างน้อย 8 ตัว" };
+    }
+    if (!/[A-Z]/.test(password)) {
+      return { success: false, error: "รหัสผ่านต้องมีตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว" };
+    }
+    if (!/[0-9]/.test(password)) {
+      return { success: false, error: "รหัสผ่านต้องมีตัวเลขอย่างน้อย 1 ตัว" };
+    }
+    if (password !== confirmPassword) {
+      return { success: false, error: "รหัสผ่านไม่ตรงกัน" };
+    }
+    const supabase = await createServerClient();
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) {
+      return { success: false, error: "เกิดข้อผิดพลาดในการเปลี่ยนรหัสผ่าน" };
+    }
+    return { success: true };
   } catch {
     return { success: false, error: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง" };
   }

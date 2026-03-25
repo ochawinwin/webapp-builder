@@ -134,12 +134,12 @@ export function CandidateLoginForm() {
                 <label className="text-sm font-medium flex items-center gap-2">
                   <Lock className="w-4 h-4 text-primary" /> รหัสผ่าน
                 </label>
-                <button
-                  type="button"
+                <Link
+                  href="/forgot-password"
                   className="text-xs text-primary hover:underline"
                 >
                   ลืมรหัสผ่าน?
-                </button>
+                </Link>
               </div>
               <div className="relative">
                 <Input

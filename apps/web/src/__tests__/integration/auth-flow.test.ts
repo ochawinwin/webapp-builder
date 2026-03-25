@@ -50,7 +50,7 @@ function makeFormData(fields: Record<string, string>): FormData {
 const CANDIDATE_FIELDS = {
   email: "candidate@example.com",
   password: "SecurePass1",
-  confirmPassword: "SecurePass1",
+  confirm_password: "SecurePass1",
   first_name: "Jane",
   last_name: "Doe",
 };
@@ -58,7 +58,7 @@ const CANDIDATE_FIELDS = {
 const COMPANY_FIELDS = {
   email: "hr@company.com",
   password: "CompanyPass1",
-  confirmPassword: "CompanyPass1",
+  confirm_password: "CompanyPass1",
   company_name: "Startup Inc",
   industry: "Technology",
   size: "1-10",
@@ -124,11 +124,11 @@ describe("Candidate auth flow", () => {
     mockCreateServerClient.mockResolvedValue(supabase as never);
 
     const result = await registerCandidateAction(
-      makeFormData({ ...CANDIDATE_FIELDS, confirmPassword: "DifferentPass1" })
+      makeFormData({ ...CANDIDATE_FIELDS, confirm_password: "DifferentPass1" })
     );
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("Passwords do not match");
+    expect(result.error).toBe("รหัสผ่านไม่ตรงกัน");
   });
 
   it("signup fails when the email is already registered", async () => {
@@ -259,7 +259,7 @@ describe("Company (HR) auth flow", () => {
     );
 
     expect(result.success).toBe(false);
-    expect(result.error).toMatch(/Company name/i);
+    expect(result.error).toMatch(/กรุณากรอกชื่อบริษัท/);
   });
 
   it("logout clears session and redirects to /", async () => {
@@ -283,7 +283,7 @@ describe("Login input validation", () => {
     );
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("Invalid email address");
+    expect(result.error).toBe("รูปแบบอีเมลไม่ถูกต้อง");
     // Supabase should never be called for invalid inputs
     expect(supabase.auth.signInWithPassword).not.toHaveBeenCalled();
   });
@@ -297,7 +297,7 @@ describe("Login input validation", () => {
     );
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("Password is required");
+    expect(result.error).toBe("กรุณากรอกรหัสผ่าน");
     expect(supabase.auth.signInWithPassword).not.toHaveBeenCalled();
   });
 });

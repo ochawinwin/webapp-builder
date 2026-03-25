@@ -106,7 +106,7 @@ describe("loginAction", () => {
     const result = await loginAction(fd);
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("Invalid email address");
+    expect(result.error).toBe("รูปแบบอีเมลไม่ถูกต้อง");
   });
 
   it("returns a validation error when password is empty", async () => {
@@ -117,7 +117,7 @@ describe("loginAction", () => {
     const result = await loginAction(fd);
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("Password is required");
+    expect(result.error).toBe("กรุณากรอกรหัสผ่าน");
   });
 
   it("returns an auth error when Supabase rejects the credentials", async () => {
@@ -149,7 +149,7 @@ describe("registerCandidateAction", () => {
     const fd = makeFormData({
       email: "newuser@example.com",
       password: "ValidPass1",
-      confirmPassword: "ValidPass1",
+      confirm_password: "ValidPass1",
       first_name: "John",
       last_name: "Smith",
     });
@@ -166,14 +166,14 @@ describe("registerCandidateAction", () => {
     const fd = makeFormData({
       email: "newuser@example.com",
       password: "ValidPass1",
-      confirmPassword: "DifferentPass1",
+      confirm_password: "DifferentPass1",
       first_name: "John",
       last_name: "Smith",
     });
     const result = await registerCandidateAction(fd);
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("Passwords do not match");
+    expect(result.error).toBe("รหัสผ่านไม่ตรงกัน");
   });
 
   it("returns an error when the email is already registered", async () => {
@@ -188,7 +188,7 @@ describe("registerCandidateAction", () => {
     const fd = makeFormData({
       email: "existing@example.com",
       password: "ValidPass1",
-      confirmPassword: "ValidPass1",
+      confirm_password: "ValidPass1",
       first_name: "John",
       last_name: "Smith",
     });
@@ -235,7 +235,7 @@ describe("registerCompanyAction", () => {
     const fd = makeFormData({
       email: "founder@startup.com",
       password: "CompanyPass1",
-      confirmPassword: "CompanyPass1",
+      confirm_password: "CompanyPass1",
       company_name: "Startup Inc",
       industry: "Technology",
       size: "1-10",
@@ -252,7 +252,7 @@ describe("registerCompanyAction", () => {
     const fd = makeFormData({
       email: "bad-email",
       password: "CompanyPass1",
-      confirmPassword: "CompanyPass1",
+      confirm_password: "CompanyPass1",
       company_name: "X",
       industry: "Tech",
       size: "1-10",

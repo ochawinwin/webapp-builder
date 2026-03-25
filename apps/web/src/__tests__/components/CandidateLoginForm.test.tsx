@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 
-// Mock server action
+// Mock server action BEFORE importing the component
 vi.mock("@/app/actions/auth.actions", () => ({
   loginAction: vi.fn(),
 }));
@@ -27,12 +26,15 @@ vi.mock("next/link", () => ({
   }) => <a href={href}>{children}</a>,
 }));
 
-// Stub useSearchParams to avoid Suspense boundary requirement
+// Stub navigation hooks — must be vi.mock'd before importing the component
 vi.mock("next/navigation", () => ({
   useRouter: vi.fn(() => ({
     push: vi.fn(),
     replace: vi.fn(),
     back: vi.fn(),
+    forward: vi.fn(),
+    refresh: vi.fn(),
+    prefetch: vi.fn(),
   })),
   useSearchParams: vi.fn(() => ({ get: vi.fn(() => null) })),
   usePathname: vi.fn(() => "/login"),
@@ -66,6 +68,16 @@ import { CandidateLoginForm } from "@/components/auth/CandidateLoginForm";
 const mockLoginAction = vi.mocked(loginAction);
 const mockPush = vi.fn();
 
+function fillAndSubmitForm(email = "jane@example.com", password = "Secret123") {
+  fireEvent.change(screen.getByPlaceholderText("example@mail.com"), {
+    target: { value: email },
+  });
+  fireEvent.change(screen.getByPlaceholderText("••••••••"), {
+    target: { value: password },
+  });
+  fireEvent.submit(screen.getByRole("button", { name: /เข้าสู่ระบบ/i }).closest("form")!);
+}
+
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(useRouter).mockReturnValue({
@@ -81,15 +93,16 @@ beforeEach(() => {
 describe("CandidateLoginForm", () => {
   it("renders the email and password inputs", () => {
     render(<CandidateLoginForm />);
-    // The email input has no associated label (no htmlFor/id), so query by placeholder
+    // The email input has no accessible label linked via htmlFor/id
     expect(screen.getByPlaceholderText("example@mail.com")).toBeInTheDocument();
-    // password input — not a textbox role by default, find by placeholder
     expect(screen.getByPlaceholderText("••••••••")).toBeInTheDocument();
   });
 
   it("renders the submit button", () => {
     render(<CandidateLoginForm />);
-    expect(screen.getByRole("button", { name: /เข้าสู่ระบบ/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /เข้าสู่ระบบ/i })
+    ).toBeInTheDocument();
   });
 
   it("calls loginAction with form data on submit", async () => {
@@ -99,14 +112,10 @@ describe("CandidateLoginForm", () => {
     });
 
     render(<CandidateLoginForm />);
-    const user = userEvent.setup();
 
-    await user.type(
-      screen.getByPlaceholderText("example@mail.com"),
-      "jane@example.com"
-    );
-    await user.type(screen.getByPlaceholderText("••••••••"), "Secret123");
-    await user.click(screen.getByRole("button", { name: /เข้าสู่ระบบ/i }));
+    await act(async () => {
+      fillAndSubmitForm();
+    });
 
     await waitFor(() => {
       expect(mockLoginAction).toHaveBeenCalledOnce();
@@ -120,14 +129,10 @@ describe("CandidateLoginForm", () => {
     });
 
     render(<CandidateLoginForm />);
-    const user = userEvent.setup();
 
-    await user.type(
-      screen.getByPlaceholderText("example@mail.com"),
-      "jane@example.com"
-    );
-    await user.type(screen.getByPlaceholderText("••••••••"), "Secret123");
-    await user.click(screen.getByRole("button", { name: /เข้าสู่ระบบ/i }));
+    await act(async () => {
+      fillAndSubmitForm();
+    });
 
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith("/search");
@@ -141,14 +146,10 @@ describe("CandidateLoginForm", () => {
     });
 
     render(<CandidateLoginForm />);
-    const user = userEvent.setup();
 
-    await user.type(
-      screen.getByPlaceholderText("example@mail.com"),
-      "jane@example.com"
-    );
-    await user.type(screen.getByPlaceholderText("••••••••"), "WrongPass1");
-    await user.click(screen.getByRole("button", { name: /เข้าสู่ระบบ/i }));
+    await act(async () => {
+      fillAndSubmitForm();
+    });
 
     await waitFor(() => {
       expect(
@@ -157,44 +158,39 @@ describe("CandidateLoginForm", () => {
     });
   });
 
-  it("disables the submit button while the action is pending", async () => {
-    // loginAction that never resolves — simulates pending state
-    mockLoginAction.mockImplementation(
-      () => new Promise(() => {})
-    );
+  it("shows loading text on the submit button while action is pending", async () => {
+    // Never resolves — simulates a perpetually pending action
+    mockLoginAction.mockImplementation(() => new Promise(() => {}));
 
     render(<CandidateLoginForm />);
-    const user = userEvent.setup();
 
-    await user.type(
-      screen.getByPlaceholderText("example@mail.com"),
-      "jane@example.com"
-    );
-    await user.type(screen.getByPlaceholderText("••••••••"), "Secret123");
+    await act(async () => {
+      fillAndSubmitForm();
+    });
 
-    const submitBtn = screen.getByRole("button", { name: /เข้าสู่ระบบ/i });
-    await user.click(submitBtn);
-
+    // After submit, the button should show the loading label and be disabled
     await waitFor(() => {
-      expect(submitBtn).toBeDisabled();
+      expect(
+        screen.getByRole("button", { name: /กำลังเข้าสู่ระบบ/i })
+      ).toBeDisabled();
     });
   });
 
-  it("toggles password visibility when the eye button is clicked", async () => {
+  it("toggles password visibility when the eye button is clicked", () => {
     render(<CandidateLoginForm />);
-    const user = userEvent.setup();
 
     const passwordInput = screen.getByPlaceholderText("••••••••");
     expect(passwordInput).toHaveAttribute("type", "password");
 
-    // The eye toggle is the last button with type="button" in the form
-    // (the first one is the "ลืมรหัสผ่าน?" button)
+    // The eye toggle is the last type="button" in the form.
+    // There are two type="button" elements: "ลืมรหัสผ่าน?" and the eye icon.
     const typeButtons = screen
       .getAllByRole("button")
       .filter((btn) => btn.getAttribute("type") === "button");
     const eyeButton = typeButtons[typeButtons.length - 1];
     expect(eyeButton).toBeDefined();
-    await user.click(eyeButton!);
+
+    fireEvent.click(eyeButton);
 
     expect(passwordInput).toHaveAttribute("type", "text");
   });

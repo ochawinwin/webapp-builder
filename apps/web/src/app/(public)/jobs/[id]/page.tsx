@@ -3,6 +3,7 @@ import { getJobById } from "@/lib/data/jobs";
 import { getAuthUser } from "@/lib/data/auth";
 import { getApplicationsByUser } from "@/lib/data/applications";
 import { getProfileByUserId } from "@/lib/data/profiles";
+import { isJobSavedByUser } from "@/lib/data/saved-jobs";
 import { JobDetailClient } from "@/components/JobDetailClient";
 import type { Metadata } from "next";
 
@@ -28,13 +29,16 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
   let isAlreadyApplied = false;
   let resumeFileName: string | null = null;
   let resumeSignedUrl: string | null = null;
+  let isSaved = false;
 
   if (auth) {
-    const [apps, profile] = await Promise.all([
+    const [apps, profile, saved] = await Promise.all([
       getApplicationsByUser(auth.user.id),
       getProfileByUserId(auth.user.id),
+      isJobSavedByUser(auth.user.id, id),
     ]);
     isAlreadyApplied = apps.some((a) => a.job_id === id);
+    isSaved = saved;
 
     if (profile?.resume_url) {
       const parts = profile.resume_url.split("/");
@@ -48,6 +52,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
       job={job}
       isAlreadyApplied={isAlreadyApplied}
       isLoggedIn={!!auth}
+      isSaved={isSaved}
       resumeFileName={resumeFileName}
       resumeSignedUrl={resumeSignedUrl}
     />
