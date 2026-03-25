@@ -76,6 +76,15 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* Responsive nav utilities — used by packages/ui/Header to avoid Tailwind @source scanning issues */
+.nav-desktop-only { display: none; }
+.nav-mobile-only  { display: block; }
+
+@media (min-width: 768px) {
+  .nav-desktop-only { display: flex; }
+  .nav-mobile-only  { display: none !important; }
+}
+
 @layer base {
   * {
     @apply border-border;

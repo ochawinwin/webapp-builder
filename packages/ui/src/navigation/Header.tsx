@@ -54,10 +54,10 @@ export function Header({ user, onLogout }: HeaderProps) {
   }, [pathname]);
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-border h-16">
+    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-border h-16">
       <div className="flex h-full items-center justify-between px-4 max-w-[1200px] mx-auto">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 shrink-0">
+        <Link href="/" className="flex items-center gap-3 shrink-0">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
             <Briefcase className="w-4 h-4 text-white" />
           </div>
@@ -67,7 +67,7 @@ export function Header({ user, onLogout }: HeaderProps) {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="nav-desktop-only flex items-center gap-1">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -85,7 +85,7 @@ export function Header({ user, onLogout }: HeaderProps) {
         </nav>
 
         {/* Desktop right actions */}
-        <div className="hidden md:flex items-center gap-2">
+        <div className="nav-desktop-only flex items-center gap-2">
           {user ? (
             <>
               <Avatar
@@ -121,7 +121,7 @@ export function Header({ user, onLogout }: HeaderProps) {
         {/* Mobile hamburger */}
         <button
           type="button"
-          className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
+          className="nav-mobile-only p-2 rounded-lg hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
           aria-expanded={mobileOpen}
           onClick={() => setMobileOpen((v) => !v)}
@@ -143,7 +143,7 @@ export function Header({ user, onLogout }: HeaderProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.15 }}
-            className="md:hidden absolute top-16 left-0 right-0 bg-white border-b border-border shadow-lg z-40"
+            className="nav-mobile-only absolute top-16 left-0 right-0 bg-white border-b border-border shadow-lg z-50"
           >
             <div className="flex flex-col p-4 gap-2 max-w-[1200px] mx-auto">
               {navLinks.map((link) => (
