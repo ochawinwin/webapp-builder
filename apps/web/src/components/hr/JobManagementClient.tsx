@@ -416,6 +416,7 @@ export function JobManagementClient({
               className="w-full min-h-[120px] p-4 rounded-xl border border-border bg-muted/10 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm leading-relaxed"
               placeholder="ระบุรายละเอียดงาน หน้าที่ความรับผิดชอบ..."
               required
+              minLength={1}
             />
           </div>
 
