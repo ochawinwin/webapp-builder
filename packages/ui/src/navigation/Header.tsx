@@ -88,12 +88,17 @@ export function Header({ user, onLogout }: HeaderProps) {
         <div className="nav-desktop-only flex items-center gap-2">
           {user ? (
             <>
-              <Avatar
-                src={user.avatarUrl}
-                fallback={user.name}
-                size="sm"
-                aria-label={user.name}
-              />
+              <Link
+                href={user.role === "company" ? "/hr/account" : "/profile"}
+                className="rounded-full hover:opacity-80 transition-opacity"
+                aria-label="แก้ไขโปรไฟล์"
+              >
+                <Avatar
+                  src={user.avatarUrl}
+                  fallback={user.name}
+                  size="sm"
+                />
+              </Link>
               <Button
                 variant="ghost"
                 size="sm"
@@ -165,14 +170,17 @@ export function Header({ user, onLogout }: HeaderProps) {
 
               {user ? (
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
+                  <Link
+                    href={user.role === "company" ? "/hr/account" : "/profile"}
+                    className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
+                  >
                     <Avatar
                       src={user.avatarUrl}
                       fallback={user.name}
                       size="sm"
                     />
                     <span className="text-sm font-medium text-foreground">{user.name}</span>
-                  </div>
+                  </Link>
                   <Button
                     variant="ghost"
                     size="sm"
