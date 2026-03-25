@@ -1,0 +1,13 @@
+{
+  "extends": "../config/tsconfig/react-library.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": "./src",
+    "paths": {
+      "next/link": ["../../apps/web/node_modules/next/link.d.ts"],
+      "next/navigation": ["../../apps/web/node_modules/next/navigation.d.ts"],
+      "framer-motion": ["../../apps/web/node_modules/framer-motion/dist/types/index.d.ts"]
+    }
+  },
+  "include": ["src"]
+}
