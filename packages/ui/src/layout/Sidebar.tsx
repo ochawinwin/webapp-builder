@@ -23,6 +23,7 @@ interface NavUser {
 interface SidebarProps {
   items: SidebarItem[];
   user?: NavUser;
+  userHref?: string;
   companyName?: string;
   isCollapsed?: boolean;
   onCollapse?: (collapsed: boolean) => void;
@@ -32,6 +33,7 @@ interface SidebarProps {
 export function Sidebar({
   items,
   user,
+  userHref,
   companyName,
   isCollapsed: controlledCollapsed,
   onCollapse,
@@ -58,24 +60,45 @@ export function Sidebar({
     >
       {/* User info */}
       {user && (
-        <div
-          className={cn(
-            "flex items-center gap-3 p-4 border-b border-border",
-            isCollapsed && "justify-center"
-          )}
-        >
-          <Avatar
-            src={user.avatarUrl}
-            fallback={user.name}
-            size="sm"
-          />
-          {!isCollapsed && (
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-foreground truncate">{user.name}</p>
-              {(user.role || companyName) && (
-                <p className="text-xs text-muted-foreground truncate">
-                  {companyName ?? user.role}
-                </p>
+        <div className="border-b border-border">
+          {userHref ? (
+            <Link
+              href={userHref}
+              title={isCollapsed ? user.name : undefined}
+              className={cn(
+                "flex items-center gap-3 p-4 hover:bg-muted transition-colors",
+                isCollapsed && "justify-center"
+              )}
+            >
+              <Avatar src={user.avatarUrl} fallback={user.name} size="sm" />
+              {!isCollapsed && (
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-foreground truncate">{user.name}</p>
+                  {(user.role || companyName) && (
+                    <p className="text-xs text-muted-foreground truncate">
+                      {user.role ?? companyName}
+                    </p>
+                  )}
+                </div>
+              )}
+            </Link>
+          ) : (
+            <div
+              className={cn(
+                "flex items-center gap-3 p-4",
+                isCollapsed && "justify-center"
+              )}
+            >
+              <Avatar src={user.avatarUrl} fallback={user.name} size="sm" />
+              {!isCollapsed && (
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-foreground truncate">{user.name}</p>
+                  {(user.role || companyName) && (
+                    <p className="text-xs text-muted-foreground truncate">
+                      {companyName ?? user.role}
+                    </p>
+                  )}
+                </div>
               )}
             </div>
           )}
